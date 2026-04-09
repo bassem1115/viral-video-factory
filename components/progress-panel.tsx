@@ -40,7 +40,8 @@ export function ProgressPanel({
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 space-y-3">
       {steps.map((step, idx) => {
-        const isPast = !isFailed && currentIdx > idx
+        const isDone = currentStep === 'done'
+        const isPast = !isFailed && (currentIdx > idx || (isDone && idx === steps.length - 1))
         const isCurrent = currentStep === step.key || (currentStep === 'done' && idx === steps.length - 1)
 
         return (

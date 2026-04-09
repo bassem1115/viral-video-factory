@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Pencil, Trash2, Plus } from 'lucide-react'
 import { StoryFormDialog } from './story-form-dialog'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/hooks/use-toast'
 
 interface Story {
   id: string
@@ -14,14 +15,15 @@ interface Story {
 
 export function StoriesTable({ stories }: { stories: Story[] }) {
   const router = useRouter()
+  const { toast } = useToast()
   const [editStory, setEditStory] = useState<Story | null>(null)
   const [addOpen, setAddOpen] = useState(false)
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this story?')) return
+    if (!window.confirm('Delete this story?')) return
     const res = await fetch(`/api/stories/${id}`, { method: 'DELETE' })
     if (!res.ok) {
-      alert('Failed to delete story. Please try again.')
+      toast({ title: 'Delete failed', description: 'Could not delete story. Please try again.', variant: 'destructive' })
       return
     }
     router.refresh()

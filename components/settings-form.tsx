@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Lock, Eye, EyeOff } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/hooks/use-toast'
 
 interface KeyInfo {
   source: 'db' | 'env' | 'missing'
@@ -19,6 +20,7 @@ interface SettingsData {
 
 export function SettingsForm({ initial }: { initial: SettingsData }) {
   const router = useRouter()
+  const { toast } = useToast()
   const [openRouterValue, setOpenRouterValue] = useState('')
   const [kieAiValue, setKieAiValue] = useState('')
   const [show, setShow] = useState({ openRouter: false, kieAi: false })
@@ -33,7 +35,7 @@ export function SettingsForm({ initial }: { initial: SettingsData }) {
         body: JSON.stringify({ key, value }),
       })
       if (!res.ok) {
-        alert('Failed to save API key. Please try again.')
+        toast({ title: 'Save failed', description: 'Failed to save API key. Please try again.', variant: 'destructive' })
         return
       }
       router.refresh()
@@ -51,7 +53,7 @@ export function SettingsForm({ initial }: { initial: SettingsData }) {
         body: JSON.stringify({ key, value: null }),
       })
       if (!res.ok) {
-        alert('Failed to clear API key. Please try again.')
+        toast({ title: 'Clear failed', description: 'Failed to clear API key. Please try again.', variant: 'destructive' })
         return
       }
       router.refresh()

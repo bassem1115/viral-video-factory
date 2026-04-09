@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/hooks/use-toast'
 
 interface Story {
   id?: string
@@ -30,6 +31,7 @@ export function StoryFormDialog({
   story?: Story
 }) {
   const router = useRouter()
+  const { toast } = useToast()
   const [title, setTitle] = useState(story?.title ?? '')
   const [content, setContent] = useState(story?.content ?? '')
   const [loading, setLoading] = useState(false)
@@ -56,7 +58,7 @@ export function StoryFormDialog({
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        alert(data.error ?? 'Failed to save story. Please try again.')
+        toast({ title: 'Save failed', description: data.error ?? 'Failed to save story. Please try again.', variant: 'destructive' })
         return
       }
 
