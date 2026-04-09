@@ -39,19 +39,27 @@ export function StoryFormDialog({
     setLoading(true)
 
     try {
+      let res: Response
       if (story?.id) {
-        await fetch(`/api/stories/${story.id}`, {
+        res = await fetch(`/api/stories/${story.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ title, content }),
         })
       } else {
-        await fetch('/api/stories', {
+        res = await fetch('/api/stories', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ title, content }),
         })
       }
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        alert(data.error ?? 'Failed to save story. Please try again.')
+        return
+      }
+
       onOpenChange(false)
       router.refresh()
     } finally {

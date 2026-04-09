@@ -26,24 +26,38 @@ export function SettingsForm({ initial }: { initial: SettingsData }) {
 
   async function save(key: string, value: string) {
     setSaving(key)
-    await fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key, value }),
-    })
-    setSaving(null)
-    router.refresh()
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, value }),
+      })
+      if (!res.ok) {
+        alert('Failed to save API key. Please try again.')
+        return
+      }
+      router.refresh()
+    } finally {
+      setSaving(null)
+    }
   }
 
   async function clear(key: string) {
     setSaving(key)
-    await fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key, value: null }),
-    })
-    setSaving(null)
-    router.refresh()
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, value: null }),
+      })
+      if (!res.ok) {
+        alert('Failed to clear API key. Please try again.')
+        return
+      }
+      router.refresh()
+    } finally {
+      setSaving(null)
+    }
   }
 
   function renderField(

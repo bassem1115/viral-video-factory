@@ -19,7 +19,11 @@ export function StoriesTable({ stories }: { stories: Story[] }) {
 
   async function handleDelete(id: string) {
     if (!confirm('Delete this story?')) return
-    await fetch(`/api/stories/${id}`, { method: 'DELETE' })
+    const res = await fetch(`/api/stories/${id}`, { method: 'DELETE' })
+    if (!res.ok) {
+      alert('Failed to delete story. Please try again.')
+      return
+    }
     router.refresh()
   }
 

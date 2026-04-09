@@ -62,9 +62,12 @@ export function ProgressPanel({
             </div>
             <div>
               <div className={cn(isCurrent && !isFailed && 'font-medium')}>{step.label}</div>
-              {step.key === 'script_done' && isPast && lastEvent?.title && (
-                <div className="text-xs text-zinc-400 mt-0.5">&ldquo;{lastEvent.title}&rdquo;</div>
-              )}
+              {step.key === 'script_done' && isPast && (() => {
+                const scriptEvent = events.find(e => e.step === 'script_done')
+                return scriptEvent?.title ? (
+                  <div className="text-xs text-zinc-400 mt-0.5">&ldquo;{scriptEvent.title}&rdquo;</div>
+                ) : null
+              })()}
               {step.key === 'video_processing' && isCurrent && lastEvent?.attempt && (
                 <div className="text-xs text-zinc-500 mt-0.5">
                   Attempt {lastEvent.attempt}/{lastEvent.max}

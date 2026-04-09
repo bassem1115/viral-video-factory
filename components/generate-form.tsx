@@ -29,6 +29,7 @@ export function GenerateForm({ stories }: { stories: Story[] }) {
   const [running, setRunning] = useState(false)
 
   function pickRandom() {
+    if (stories.length === 0) return
     const random = stories[Math.floor(Math.random() * stories.length)]
     setSelectedStoryId(random.id)
   }
@@ -108,7 +109,7 @@ export function GenerateForm({ stories }: { stories: Story[] }) {
           variant="outline"
           size="icon"
           onClick={pickRandom}
-          disabled={running}
+          disabled={running || stories.length === 0}
           className="border-zinc-700 hover:bg-zinc-800"
           title="Pick random story"
         >
