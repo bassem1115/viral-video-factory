@@ -99,10 +99,14 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error'
-        await prisma.job.update({
-          where: { id: jobId },
-          data: { status: 'failed', errorMessage: message },
-        })
+        try {
+          await prisma.job.update({
+            where: { id: jobId },
+            data: { status: 'failed', errorMessage: message },
+          })
+        } catch {
+          // DB update failed — still close the stream cleanly
+        }
         send({ step: 'failed', error: message })
         controller.close()
       }
