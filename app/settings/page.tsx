@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { prisma } from '@/lib/prisma'
 import { getApiKeySource } from '@/lib/api-keys'
 import { SettingsForm } from '@/components/settings-form'
