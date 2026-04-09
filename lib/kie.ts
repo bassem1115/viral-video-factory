@@ -54,8 +54,15 @@ export async function checkVideoStatus(taskId: string): Promise<KieStatusRespons
 
   const data = await response.json()
 
+  const VALID_STATUSES = ['pending', 'processing', 'success', 'failed'] as const
+  type ValidStatus = typeof VALID_STATUSES[number]
+
+  if (!VALID_STATUSES.includes(data.status as ValidStatus)) {
+    throw new Error(`kie.ai returned unexpected status: ${data.status}`)
+  }
+
   return {
-    status: data.status,
+    status: data.status as ValidStatus,
     videoUrl: data.videoUrl ?? data.video_url ?? data.url,
     error: data.error ?? data.message,
   }

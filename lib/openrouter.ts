@@ -46,7 +46,12 @@ export async function generateScript(storyContent: string): Promise<ScriptOutput
 
   if (!content) throw new Error('OpenRouter returned empty response')
 
-  const parsed = JSON.parse(content) as ScriptOutput
+  let parsed: ScriptOutput
+  try {
+    parsed = JSON.parse(content) as ScriptOutput
+  } catch {
+    throw new Error('OpenRouter response was not valid JSON')
+  }
 
   if (!parsed.title || !parsed.description || !parsed.videoPrompt) {
     throw new Error('OpenRouter response missing required fields')
