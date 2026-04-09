@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getApiKeySource } from '@/lib/api-keys'
 
 const KEYS = ['OPENROUTER_API_KEY', 'KIE_AI_API_KEY'] as const
 
@@ -8,12 +7,20 @@ export async function GET() {
   const result: Record<string, { source: string; masked: string }> = {}
 
   for (const key of KEYS) {
-    const source = await getApiKeySource(key)
     const dbSetting = await prisma.setting.findUnique({ where: { key } })
-    const value = dbSetting?.value ?? process.env[key] ?? ''
+    const envValue = process.env[key] ?? ''
+    const value = dbSetting?.value ?? envValue
+    const source: 'db' | 'env' | 'missing' = dbSetting?.value
+      ? 'db'
+      : envValue
+      ? 'env'
+      : 'missing'
+
     result[key] = {
       source,
-      masked: value ? `${value.slice(0, 6)}${'•'.repeat(Math.max(0, value.length - 10))}${value.slice(-4)}` : '',
+      masked: value
+        ? `${value.slice(0, 6)}${'•'.repeat(Math.max(0, value.length - 10))}${value.slice(-4)}`
+        : '',
     }
   }
 
