@@ -2,9 +2,15 @@ export const dynamic = 'force-dynamic'
 
 import { prisma } from '@/lib/prisma'
 import { StoriesTable } from '@/components/stories-table'
+import { DbNotConfigured } from '@/components/db-not-configured'
 
 export default async function StoriesPage() {
-  const stories = await prisma.story.findMany({ orderBy: { createdAt: 'asc' } })
+  let stories: { id: string; title: string; content: string }[] = []
+  try {
+    stories = await prisma.story.findMany({ orderBy: { createdAt: 'asc' } })
+  } catch {
+    return <DbNotConfigured />
+  }
 
   return (
     <div>

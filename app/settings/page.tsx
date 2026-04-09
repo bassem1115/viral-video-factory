@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { prisma } from '@/lib/prisma'
 import { getApiKeySource } from '@/lib/api-keys'
 import { SettingsForm } from '@/components/settings-form'
+import { DbNotConfigured } from '@/components/db-not-configured'
 
 async function getSettingsData() {
   const keys = ['OPENROUTER_API_KEY', 'KIE_AI_API_KEY'] as const
@@ -27,7 +28,12 @@ async function getSettingsData() {
 }
 
 export default async function SettingsPage() {
-  const settings = await getSettingsData()
+  let settings: Awaited<ReturnType<typeof getSettingsData>>
+  try {
+    settings = await getSettingsData()
+  } catch {
+    return <DbNotConfigured />
+  }
 
   return (
     <div>

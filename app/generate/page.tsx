@@ -2,12 +2,18 @@ export const dynamic = 'force-dynamic'
 
 import { prisma } from '@/lib/prisma'
 import { GenerateForm } from '@/components/generate-form'
+import { DbNotConfigured } from '@/components/db-not-configured'
 
 export default async function GeneratePage() {
-  const stories = await prisma.story.findMany({
-    orderBy: { createdAt: 'asc' },
-    select: { id: true, title: true },
-  })
+  let stories: { id: string; title: string }[] = []
+  try {
+    stories = await prisma.story.findMany({
+      orderBy: { createdAt: 'asc' },
+      select: { id: true, title: true },
+    })
+  } catch {
+    return <DbNotConfigured />
+  }
 
   return (
     <div>

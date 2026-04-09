@@ -4,14 +4,20 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { JobCard } from '@/components/job-card'
 import { Button } from '@/components/ui/button'
+import { DbNotConfigured } from '@/components/db-not-configured'
 import { Plus } from 'lucide-react'
 
 export default async function DashboardPage() {
-  const jobs = await prisma.job.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-    include: { story: { select: { title: true } } },
-  })
+  let jobs: Awaited<ReturnType<typeof prisma.job.findMany<{ include: { story: { select: { title: true } } } }>>> = []
+  try {
+    jobs = await prisma.job.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+      include: { story: { select: { title: true } } },
+    })
+  } catch {
+    return <DbNotConfigured />
+  }
 
   return (
     <div>
