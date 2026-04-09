@@ -86,6 +86,12 @@ const stories = [
 ]
 
 async function main() {
+  const count = await prisma.story.count()
+  if (count > 0) {
+    console.log(`Database already has ${count} stories, skipping seed.`)
+    return
+  }
+
   console.log('Seeding database with 20 stories...')
 
   for (const story of stories) {
